@@ -8,12 +8,20 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
+        // Entities to be added at the end of each update
+        this.entitiesToAdd = [];
 
         // Information on the input
         this.click = null;
         this.mouse = null;
         this.wheel = null;
         this.keys = {};
+        
+        this.left = false;
+        this.right = false;
+        this.up = false;
+        this.down = false;
+        this.space = false;
 
         // THE KILL SWITCH
         this.running = false;
@@ -46,7 +54,50 @@ class GameEngine {
     };
 
     startInput() {
-        const getXandY = e => ({
+		var that = this;
+		
+		this.ctx.canvas.addEventListener("keydown", function (e) {
+			console.log(e);
+			switch (e.code) {
+				case "ArrowLeft":
+					that.left = true;
+					break;
+				case "ArrowRight":
+					that.right = true;
+					break;
+				case "ArrowUp":
+					that.up = true;
+					break;
+				case "ArrowDown":
+					that.down = true;
+					break;
+				case "Space":
+					that.space = true;
+					break;
+			}
+		}, false);
+		
+		this.ctx.canvas.addEventListener("keyup", function (e) {
+			switch (e.code) {
+				case "ArrowLeft":
+					that.left = false;
+					break;
+				case "ArrowRight":
+					that.right = false;
+					break;
+				case "ArrowUp":
+					that.up = false;
+					break;
+				case "ArrowDown":
+					that.down = false;
+					break;
+				case "Space":
+					that.space = false;
+					break;
+			}
+		}, false);
+		
+        /*const getXandY = e => ({
             x: e.clientX - this.ctx.canvas.getBoundingClientRect().left,
             y: e.clientY - this.ctx.canvas.getBoundingClientRect().top
         });
@@ -86,11 +137,11 @@ class GameEngine {
         });
 
         window.addEventListener("keydown", event => this.keys[event.key] = true);
-        window.addEventListener("keyup", event => this.keys[event.key] = false);
+        window.addEventListener("keyup", event => this.keys[event.key] = false);*/
     };
 
     addEntity(entity) {
-        this.entities.push(entity);
+        this.entitiesToAdd.push(entity);
     };
 
     draw() {
@@ -104,21 +155,15 @@ class GameEngine {
     };
 
     update() {
-        let entitiesCount = this.entities.length;
+        // Update Entities
+        this.entities.forEach(entity => entity.update(this));
 
-        for (let i = 0; i < entitiesCount; i++) {
-            let entity = this.entities[i];
+        // Remove dead things
+        this.entities = this.entities.filter(entity => !entity.removeFromWorld);
 
-            if (!entity.removeFromWorld) {
-                entity.update();
-            }
-        }
-
-        for (let i = this.entities.length - 1; i >= 0; --i) {
-            if (this.entities[i].removeFromWorld) {
-                this.entities.splice(i, 1);
-            }
-        }
+        // Add new things
+        this.entities = this.entities.concat(this.entitiesToAdd);
+        this.entitiesToAdd = [];
     };
 
     loop() {
@@ -127,6 +172,9 @@ class GameEngine {
         this.draw();
     };
 
+    get["deltaTime"]() { return this.clockTick; }
+    //get["width"]() { return this.ctx?.canvas?.width || 0; }
+    //get["height"]() { return this.ctx?.canvas?.height || 0; }
 };
 
 // KV Le was here :)

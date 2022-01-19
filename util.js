@@ -1,11 +1,20 @@
 /** Global Parameters Object */
 const params = { };
 
+/** Easy access to math functions */
+const {
+    pow, ceil, floor, round, log, log2: lg, max, min, random, sqrt, abs,
+    PI, E, sin, cos, tan, asin, acos, atan, atan2,
+} = Math
+
+/** Easy access to logging :) (Python syntax XD) */
+const {log: print} = console
+
 /**
  * @param {Number} n
  * @returns Random Integer Between 0 and n-1
  */
-const randomInt = n => Math.floor(random() * n);
+const randomInt = n => floor(random() * n);
 
 /**
  * @param {Number} r Red Value
@@ -50,10 +59,47 @@ window.requestAnimFrame = (() => {
 })();
 
 /**
+ * Random Integer between two numbers inclusively
+ * @param {Number} min Lower bound
+ * @param {Number} max Upper bound
+ */
+const getRandomInteger = (min, max) => round(Math.random() * (max - min) + min);
+
+/**
+ * Random number between two numbers inclusively
+ * @param {Number} min Lower bound
+ * @param {Number} max Upper bound
+ */
+const getRandomRange = (min, max) => Math.random() * (max - min) + min;
+
+/**
+ * Compute log with arbitrary base
+ * @param {Number} base Base of the log
+ * @param {Number} x Number to take log of
+ */
+const logBase = (base, x) => log(x) / log(base);
+
+/**
+ * Deep copy JSON-serializable objects. ONLY FOR OBJECTS. DON'T PUT CLASSES HERE
+ * @param {Object} object Object to deep copy
+ * @returns Deep copy of the object
+ */
+const deepObjectCopy = object => JSON.parse(JSON.stringify(object));
+
+/**
  * Returns distance from two points
- * @param {Number} p1, p2 Two objects with x and y coordinates
+ * @param {Number} x1, y1, x2, y2 Coordinates of first and second point
  * @returns Distance between the two points
  */
-const getDistance = (p1, p2) => {
-    return sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+const getDistance = (x1, y1, x2, y2) => {
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 };
+
+/**
+ * Returns random element from array
+ * @param {Array} items
+ * @returns Returns random element from array. Null if empty
+ */
+const chooseRandom = items => items.length > 0
+    ? items[floor(random() * items.length)]
+    : null;
